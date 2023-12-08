@@ -160,10 +160,12 @@ def total_word_count(baseurl):
     #
     # call the web service:
     #
-    api = '/word_count' #TODO: UPDATE THIS IF THE API IS NOT THIS
+    api = '/total'
     url = baseurl + api
 
-    res = requests.get(url)
+    input_data = json.dumps({"url": client_url})
+    
+    res = requests.get(url, data=input_data)
 
     #
     # let's look at what we got back:
@@ -183,9 +185,10 @@ def total_word_count(baseurl):
     # deserialize and extract word count:
     #
     body = res.json()
+    print(body)
 
-    # TODO: May need to adjust this
-    print(f"Total word count: {body}")
+    print()
+    print(f"Total word count of {client_url}: {body}")
 
     return
 
@@ -229,8 +232,8 @@ def single_word_count(baseurl):
     #
     # call the web service:
     #
-    api = '/word_occurences' #TODO: UPDATE THIS IF THE API IS NOT THIS
-    url = baseurl + api | "/" + input_word
+    api = '/word'
+    url = baseurl + api + "/" + input_word
 
     res = requests.get(url)
 
