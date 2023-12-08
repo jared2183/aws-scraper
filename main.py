@@ -84,7 +84,7 @@ def outgoing_links(baseurl):
     #
     # prompt the user for a URL:
     #
-    print("Enter URL>")
+    print("Enter URL (NOTE: URL must begin with \"https://\" or \"http://\" (ex. enter https://google.com instead of google.com))>")
     client_url = input()
 
     input_data = json.dumps({"url": client_url})
@@ -116,7 +116,8 @@ def outgoing_links(baseurl):
     #
     body = res.json()
 
-    print("Here are the outgoing links:")
+    print()
+    print(f"Here are the outgoing links from {client_url}:")
     link_count = 1
     for link in body:
       print(f"{link_count}) {link}")
@@ -153,7 +154,7 @@ def total_word_count(baseurl):
     #
     # prompt the user for a URL
     #
-    print("Enter URL>")
+    print("Enter URL (NOTE: URL must begin with \"https://\" or \"http://\" (ex. enter https://google.com instead of google.com))>")
     client_url = input()
 
     #
@@ -216,7 +217,7 @@ def single_word_count(baseurl):
     #
     # prompt the user for a URL
     #
-    print("Enter URL>")
+    print("Enter URL (NOTE: URL must begin with \"https://\" or \"http://\" (ex. enter https://google.com instead of google.com))>")
     input_url = input()
 
     #
