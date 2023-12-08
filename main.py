@@ -115,6 +115,7 @@ def outgoing_links(baseurl):
     # deserialize and extract links:
     #
     body = res.json()
+    print(body)
 
     print()
     print(f"Here are the outgoing links from {client_url}:")
@@ -255,6 +256,7 @@ def single_word_count(baseurl):
     # deserialize and extract word coun for inputted wordt:
     #
     body = res.json()
+    print(body)
 
     # TODO: Will need to adjust
     print(f"Total word count for {input_word}: {body}")
