@@ -16,7 +16,7 @@
 #
 
 import requests
-import jsons
+import json
 
 import uuid
 import pathlib
@@ -82,10 +82,12 @@ def outgoing_links(baseurl):
 
   try:
     #
-    # prompt the user for a URL
+    # prompt the user for a URL:
     #
     print("Enter URL>")
     client_url = input()
+
+    input_data = json.dumps({"url": client_url})
 
     #
     # call the web service:
@@ -93,7 +95,7 @@ def outgoing_links(baseurl):
     api = '/links'
     url = baseurl + api
 
-    res = requests.get(url)
+    res = requests.get(url, data=input_data)
 
     #
     # let's look at what we got back:
@@ -115,7 +117,6 @@ def outgoing_links(baseurl):
     body = res.json()
 
     print("Here are the outgoing links:")
-
     link_count = 1
     for link in body:
       print(f"{link_count}) {link}")
