@@ -93,9 +93,9 @@ def outgoing_links(baseurl):
     # call the web service:
     #
     api = '/links'
-    url = baseurl + api
+    url_endpoint = baseurl + api
 
-    res = requests.get(url, data=input_data)
+    res = requests.get(url_endpoint, data=input_data)
 
     #
     # let's look at what we got back:
@@ -103,7 +103,7 @@ def outgoing_links(baseurl):
     if res.status_code != 200:
       # failed:
       print("Failed with status code:", res.status_code)
-      print("url: " + url)
+      print("url: " + url_endpoint)
       if res.status_code == 400:
         # we'll have an error message
         body = res.json()
@@ -115,7 +115,6 @@ def outgoing_links(baseurl):
     # deserialize and extract links:
     #
     body = res.json()
-    print(body)
 
     print()
     print(f"Here are the outgoing links from {client_url}:")
@@ -128,7 +127,7 @@ def outgoing_links(baseurl):
 
   except Exception as e:
     logging.error("outgoing_links() failed:")
-    logging.error("url: " + url)
+    logging.error("url: " + url_endpoint)
     logging.error(e)
     return
 
@@ -162,11 +161,11 @@ def total_word_count(baseurl):
     # call the web service:
     #
     api = '/total'
-    url = baseurl + api
+    url_endpoint = baseurl + api
 
     input_data = json.dumps({"url": client_url})
     
-    res = requests.get(url, data=input_data)
+    res = requests.get(url_endpoint, data=input_data)
 
     #
     # let's look at what we got back:
@@ -174,7 +173,7 @@ def total_word_count(baseurl):
     if res.status_code != 200:
       # failed:
       print("Failed with status code:", res.status_code)
-      print("url: " + url)
+      print("url: " + url_endpoint)
       if res.status_code == 400:
         # we'll have an error message
         body = res.json()
@@ -186,16 +185,15 @@ def total_word_count(baseurl):
     # deserialize and extract word count:
     #
     body = res.json()
-    print(body)
 
     print()
-    print(f"Total word count of {client_url}: {body}")
+    print(f"There are {body} words in total.")
 
     return
 
   except Exception as e:
     logging.error("total_word_count() failed:")
-    logging.error("url: " + url)
+    logging.error("url: " + url_endpoint)
     logging.error(e)
     return
 
@@ -222,7 +220,7 @@ def single_word_count(baseurl):
     # prompt the user for a URL
     #
     print("Enter URL (NOTE: URL must begin with \"https://\" or \"http://\" (ex. enter https://google.com instead of google.com))>")
-    input_url = input()
+    client_url = input()
 
     #
     # prompt the user for a word
@@ -234,9 +232,11 @@ def single_word_count(baseurl):
     # call the web service:
     #
     api = '/word'
-    url = baseurl + api + "/" + input_word
+    url_endpoint = baseurl + api + "/" + input_word
 
-    res = requests.get(url)
+    input_data = json.dumps({"url": client_url})
+
+    res = requests.get(url_endpoint, data=input_data)
 
     #
     # let's look at what we got back:
@@ -244,7 +244,7 @@ def single_word_count(baseurl):
     if res.status_code != 200:
       # failed:
       print("Failed with status code:", res.status_code)
-      print("url: " + url)
+      print("url: " + url_endpoint)
       if res.status_code == 400:
         # we'll have an error message
         body = res.json()
@@ -253,19 +253,18 @@ def single_word_count(baseurl):
       return
 
     #
-    # deserialize and extract word coun for inputted wordt:
+    # deserialize and extract word count for inputted word:
     #
     body = res.json()
-    print(body)
 
-    # TODO: Will need to adjust
-    print(f"Total word count for {input_word}: {body}")
+    print()
+    print(body["result"])
 
     return
 
   except Exception as e:
     logging.error("single_word_count() failed:")
-    logging.error("url: " + url)
+    logging.error("url: " + url_endpoint)
     logging.error(e)
     return
 
