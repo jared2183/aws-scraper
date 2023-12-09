@@ -1,28 +1,37 @@
+import json
 import requests
 from bs4 import BeautifulSoup
 
-def get_word_occurrences(url, target_word):
-    
-    
-    # Send a GET request to the URL
-    response = requests.get(url)
+def lambda_handler(event, context):
+    try:
+        if "body" not in event or event["body"] is None:
+            raise Exception("event has no body")
+            
+        # Parse the JSON body of the request
+        request_body = json.loads(event['body'])
 
-    # Check if the request was successful (status code 200)
-    if response.status_code == 200:
-        # Parse the HTML content of the page
-        soup = BeautifulSoup(response.text, 'html.parser')
+        # Extract target_word and url from the request body
+        target_word = event['pathParameters']['target_word']
+        url = request_body['url']
 
-        # Extract text content from the HTML
-        text_content = soup.get_text()
+        # Fetch HTML content from the URL
+        response = requests.get(url)
+        html_content = response.text
 
-        # Count occurrences of the target word
-        word_count = text_content.lower().count(target_word.lower())
+        # Parse HTML using BeautifulSoup
+        soup = BeautifulSoup(html_content, 'html.parser')
 
-        print(f"The word '{target_word}' appears {word_count} times on {url}")
-    else:
-        raise Exception(f"Failed to retrieve content from {url}. Status code: {response.status_code}")
+        # Find occurrences of the target word in the HTML text
+        word_count = soup.text.lower().count(target_word.lower())
 
-# Example usage:
-url_to_count_word = 'https://example.com'
-target_word_to_count = 'example'
-get_word_occurrences(url_to_count_word, target_word_to_count)
+        # Return the result
+        return {
+            'statusCode': 200,
+            'body': json.dumps({'result': f'The word \"{target_word}\" occurs {word_count} times.'})
+        }
+
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'error': f'Error: {str(e)}'})
+        }

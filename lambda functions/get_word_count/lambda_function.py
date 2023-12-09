@@ -1,30 +1,51 @@
 import requests
 from bs4 import BeautifulSoup
-import re
 import json
+import re
 
-def get_word_count(url):
-    # Send a GET request to the URL
-    response = requests.get(url)
+def lambda_handler(event, context):
+    try: 
+        if "body" not in event or event["body"] is None:
+            raise Exception("event has no body")
+        
+        body = json.loads(event["body"]) # parse the json
+        
+        if "url" not in body:
+            raise Exception("event has a body but no url")
 
-    # Check if the request was successful (status code 200)
-    if response.status_code == 200:
-        # Parse the HTML content of the page
-        soup = BeautifulSoup(response.text, 'html.parser')
+        url = body["url"]
 
-        # Extract text content from the HTML
-        text_content = soup.get_text()
+        # Send a GET request to the URL
+        response = requests.get(url)
 
-        # Use regular expression to find words (assuming words are separated by spaces)
-        words = re.findall(r'\b\w+\b', text_content)
+        # Check if the request was successful (status code 200)
+        if response.status_code == 200:
+            # Parse the HTML content of the page
+            soup = BeautifulSoup(response.text, 'html.parser')
 
-        # Count the number of words
-        word_count = len(words)
+            # Extract text from the HTML
+            text = soup.get_text()
 
-        print(f"Word count of {url}: {word_count} words")
-    else:
-        raise Exception(f"Failed to retrieve content from {url}. Status code: {response.status_code}")
+            # Use regex to split the text into words
+            words = re.findall(r'\b\w+\b', text)
 
-# Example usage:
-url_to_count_words = 'https://example.com'
-get_word_count(url_to_count_words)
+            # Count the number of words
+            word_count = len(words)
+
+            # returns total number of words
+            return {
+                'statusCode': 200,
+                'body': json.dumps(word_count)
+            }
+        
+        else:
+            raise Exception(f"Failed to retrieve content from {url}. Status code: {response.status_code}")
+
+    except Exception as err:
+        print("**ERROR**")
+        print(str(err))
+        
+        return {
+            'statusCode': 400,
+            'body': json.dumps(str(err))
+        }
